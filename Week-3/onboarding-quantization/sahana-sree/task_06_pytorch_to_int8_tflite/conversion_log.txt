@@ -1,0 +1,233 @@
+============================================================
+Task 06 - PyTorch (.pth) to Fully INT8 TensorFlow Lite Conversion
+============================================================
+
+Date: 23-07-2026
+Dataset: MNIST
+Model: SimpleCNN
+Frameworks:
+- PyTorch
+- ONNX
+- TensorFlow 2.21.0
+- onnx2tf 1.28.8
+
+------------------------------------------------------------
+STEP 1 : Load Trained PyTorch Model
+------------------------------------------------------------
+
+Status : SUCCESS
+
+- Reconstructed the SimpleCNN architecture.
+- Loaded trained weights from model.pth.
+- Switched model to evaluation mode.
+
+Output:
+✓ model.pth loaded successfully.
+
+------------------------------------------------------------
+STEP 2 : Validate Calibration Data
+------------------------------------------------------------
+
+Status : SUCCESS
+
+- Calibration directory found.
+- Verified 50 calibration .npy files.
+- Checked:
+    ✓ Correct dtype
+    ✓ Correct tensor shape
+    ✓ No NaN values
+    ✓ No Inf values
+
+Output:
+Calibration data validated successfully.
+
+------------------------------------------------------------
+STEP 3 : Export Model to ONNX
+------------------------------------------------------------
+
+Status : SUCCESS
+
+- Exported PyTorch model to ONNX format.
+- Static input shape used.
+- Named input/output tensors.
+- ONNX model verified using onnx.checker.
+
+Generated file:
+model.onnx
+
+------------------------------------------------------------
+STEP 4 : Convert ONNX to TensorFlow SavedModel
+------------------------------------------------------------
+
+Initial Status : FAILED
+
+Encountered dependency errors during conversion.
+
+Error 1:
+ModuleNotFoundError:
+No module named 'tf_keras'
+
+Resolution:
+Installed tf-keras package.
+
+------------------------------------------------------------
+
+Error 2:
+ModuleNotFoundError:
+No module named 'onnx_graphsurgeon'
+
+Resolution:
+Installed onnx-graphsurgeon.
+
+------------------------------------------------------------
+
+Error 3:
+ModuleNotFoundError:
+No module named 'ai_edge_litert'
+
+Resolution:
+Installed ai-edge-litert.
+
+------------------------------------------------------------
+
+Error 4:
+ModuleNotFoundError:
+No module named 'sng4onnx'
+
+Resolution:
+Installed sng4onnx.
+
+------------------------------------------------------------
+
+After installing all missing dependencies:
+
+Status : SUCCESS
+
+SavedModel generated successfully.
+
+Output Folder:
+saved_model/
+
+------------------------------------------------------------
+STEP 5 : INT8 Quantization
+------------------------------------------------------------
+
+Status : SUCCESS
+
+Configuration:
+- Weight Quantization : INT8
+- Activation Quantization : INT8
+- Input Tensor : INT8
+- Output Tensor : INT8
+
+Calibration:
+Used 50 MNIST calibration samples.
+
+Generated:
+model_int8.tflite
+
+------------------------------------------------------------
+STEP 6 : Model Verification
+------------------------------------------------------------
+
+Initial Status : FAILED
+
+Error:
+
+ValueError:
+Cannot set tensor:
+Dimension mismatch.
+Got 1 but expected 28 for dimension 1 of input 0.
+
+Cause:
+
+Calibration image shape was
+
+(1,28,28)
+
+while TensorFlow Lite expected
+
+(1,28,28,1)
+
+Resolution:
+
+Updated verify_model.py to:
+
+• Remove extra batch dimension
+• Add channel dimension correctly
+• Reshape input to (1,28,28,1)
+• Convert input to INT8 using quantization scale and zero-point
+
+Verification repeated.
+
+------------------------------------------------------------
+
+Verification Status : SUCCESS
+
+Input Tensor:
+dtype = int8
+
+Output Tensor:
+dtype = int8
+
+Input Quantization:
+Scale = 0.003921568859368563
+Zero Point = -128
+
+Output Quantization:
+Scale = 0.15382952988147736
+Zero Point = -12
+
+Model Size:
+110.47 KiB
+
+Test Inference:
+Completed Successfully
+
+Prediction:
+7
+
+------------------------------------------------------------
+Warnings Observed
+------------------------------------------------------------
+
+TensorFlow Warning:
+
+oneDNN custom operations are enabled.
+
+This warning is informational and does not affect model conversion.
+
+------------------------------------------------------------
+
+TensorFlow Lite Warning:
+
+tf.lite.Interpreter is deprecated.
+
+Recommendation:
+Future versions should use the LiteRT interpreter from ai_edge_litert.
+
+This warning does not affect the generated INT8 model.
+
+------------------------------------------------------------
+Final Result
+------------------------------------------------------------
+
+✓ PyTorch model loaded successfully.
+
+✓ Calibration data validated.
+
+✓ ONNX export successful.
+
+✓ TensorFlow SavedModel generated.
+
+✓ Fully INT8 TensorFlow Lite model created.
+
+✓ Input tensor verified as INT8.
+
+✓ Output tensor verified as INT8.
+
+✓ Quantization parameters verified.
+
+✓ Model inference completed successfully.
+
+✓ Assignment completed successfully.
