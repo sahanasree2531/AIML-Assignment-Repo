@@ -1,0 +1,9 @@
+Module,Level,Frequency
+Authentication,ERROR,1
+Authentication,WARNING,1
+Database,ERROR,2
+Database,WARNING,1
+Network,ERROR,1
+Network,WARNING,1
+Payment,ERROR,1
+Payment,WARNING,1
